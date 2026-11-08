@@ -1,0 +1,7 @@
+# このファイルは kousen_site フォルダ内に「.assetsignore」という名前で置きます。
+# 配信しないファイル
+.DS_Store
+Thumbs.db
+desktop.ini
+*.psd
+*.ai

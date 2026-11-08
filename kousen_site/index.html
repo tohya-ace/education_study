@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<script>(function(){
+  /* 学年に あわせて 漢字と ひらがなを かきわける */
+  var GR={"1": "一右雨円王音下火花貝学気九休玉金空月犬見五口校左三山子四糸字耳七車手十出女小上森人水正生青夕石赤千川先早草足村大男竹中虫町天田土二日入年白八百文木本名目立力林六", "2": "引羽雲園遠何科夏家歌画回会海絵外角楽活間丸岩顔汽記帰弓牛魚京強教近兄形計元言原戸古午後語工公広交光考行高黄合谷国黒今才細作算止市矢姉思紙寺自時室社弱首秋週春書少場色食心新親図数西声星晴切雪船線前組走多太体台地池知茶昼長鳥朝直通弟店点電刀冬当東答頭同道読内南肉馬売買麦半番父風分聞米歩母方北毎妹万明鳴毛門夜野友用曜来里理話", "3": "悪安暗医委意育員院飲運泳駅央横屋温化荷界開階寒感漢館岸起期客究急級宮球去橋業曲局銀区苦具君係軽血決研県庫湖向幸港号根祭皿仕死使始指歯詩次事持式実写者主守取酒受州拾終習集住重宿所暑助昭消商章勝乗植申身神真深進世整昔全相送想息速族他打対待代第題炭短談着注柱丁帳調追定庭笛鉄転都度投豆島湯登等動童農波配倍箱畑発反坂板皮悲美鼻筆氷表秒病品負部服福物平返勉放味命面問役薬由油有遊予羊洋葉陽様落流旅両緑礼列練路和", "4": "愛案以衣位茨印英栄媛塩岡億加果貨課芽賀改械害街各覚潟完官管関観願岐希季旗器機議求泣給挙漁共協鏡競極熊訓軍郡群径景芸欠結建健験固功好香候康佐差菜最埼材崎昨札刷察参産散残氏司試児治滋辞鹿失借種周祝順初松笑唱焼照城縄臣信井成省清静席積折節説浅戦選然争倉巣束側続卒孫帯隊達単置仲沖兆低底的典伝徒努灯働特徳栃奈梨熱念敗梅博阪飯飛必票標不夫付府阜富副兵別辺変便包法望牧末満未民無約勇要養浴利陸良料量輪類令冷例連老労録", "5": "圧囲移因永営衛易益液演応往桜可仮価河過快解格確額刊幹慣眼紀基寄規喜技義逆久旧救居許境均禁句型経潔件険検限現減故個護効厚耕航鉱構興講告混査再災妻採際在財罪殺雑酸賛士支史志枝師資飼示似識質舎謝授修述術準序招証象賞条状常情織職制性政勢精製税責績接設絶祖素総造像増則測属率損貸態団断築貯張停提程適統堂銅導得毒独任燃能破犯判版比肥非費備評貧布婦武復複仏粉編弁保墓報豊防貿暴脈務夢迷綿輸余容略留領歴", "6": "胃異遺域宇映延沿恩我灰拡革閣割株干巻看簡危机揮貴疑吸供胸郷勤筋系敬警劇激穴券絹権憲源厳己呼誤后孝皇紅降鋼刻穀骨困砂座済裁策冊蚕至私姿視詞誌磁射捨尺若樹収宗就衆従縦縮熟純処署諸除承将傷障蒸針仁垂推寸盛聖誠舌宣専泉洗染銭善奏窓創装層操蔵臓存尊退宅担探誕段暖値宙忠著庁頂腸潮賃痛敵展討党糖届難乳認納脳派拝背肺俳班晩否批秘俵腹奮並陛閉片補暮宝訪亡忘棒枚幕密盟模訳郵優預幼欲翌乱卵覧裏律臨朗論"};
+  var KG={};for(var g in GR){var s=GR[g];for(var i=0;i<s.length;i++)KG[s[i]]=+g}
+  var L=null,from=null;
+  try{from=new URLSearchParams(location.search).get('from')}catch(e){}
+  if(window.KZ_LEVEL!==undefined)L=window.KZ_LEVEL;
+  else if(from){L={pre:0,'1':0,'2':1,'3':2,'4':3,'5':4,'6':5,brain:99}[from];if(L===undefined)L=null}
+  var S0='',S1='',S2='',RE=/([khr])([^]*)([^]*)/g;
+  function ok(k){for(var i=0;i<k.length;i++){var c=k.charCodeAt(i);if(c>=0x4e00&&c<=0x9fff){var g=KG[k[i]]||7;if(g>L)return false}}return true}
+  function seg(t,k,r){if(L===null)return t==='h'?r:k;return ok(k)?k:r}
+  function plain(s){return typeof s==='string'&&s.indexOf(S0)>=0?s.replace(RE,function(_,t,k,r){return seg(t,k,r)}):s}
+  function reading(s){return typeof s==='string'&&s.indexOf(S0)>=0?s.replace(RE,function(_,t,k,r){return r}):s}
+  window.__kz={plain:plain,reading:reading,level:L};
+  var SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,TITLE:1,OPTION:1};
+  function doText(n){
+    var v=n.nodeValue;if(!v||v.indexOf(S0)<0)return;
+    var p=n.parentNode;if(!p||p.nodeName==='SCRIPT'||p.nodeName==='STYLE'||p.nodeName==='TITLE')return;if(SKIP[p.nodeName]){n.nodeValue=plain(v);return}
+    if(L===null&&/r/.test(v)){
+      // ルビは そのまま ルビで だす
+      var f=document.createDocumentFragment(),last=0,m;RE.lastIndex=0;
+      while((m=RE.exec(v))){if(m.index>last)f.appendChild(document.createTextNode(v.slice(last,m.index)));
+        if(m[1]==='r'){var rb=document.createElement('ruby');rb.appendChild(document.createTextNode(m[2]));var rt=document.createElement('rt');rt.textContent=m[3];rb.appendChild(rt);f.appendChild(rb)}
+        else f.appendChild(document.createTextNode(seg(m[1],m[2],m[3])));last=RE.lastIndex}
+      if(last<v.length)f.appendChild(document.createTextNode(v.slice(last)));
+      p.replaceChild(f,n);return}
+    n.nodeValue=plain(v);
+  }
+  var ATTR=['aria-label','title','alt','placeholder'];
+  function doEl(el){for(var i=0;i<ATTR.length;i++){var a=el.getAttribute&&el.getAttribute(ATTR[i]);if(a&&a.indexOf(S0)>=0)el.setAttribute(ATTR[i],plain(a))}
+    if(el.nodeName==='INPUT'&&el.value&&el.value.indexOf(S0)>=0)el.value=plain(el.value)}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){if(SKIP[root.nodeName]&&root.nodeName!=='OPTION'&&root.nodeName!=='TITLE')return;doEl(root)}
+    var tw=document.createTreeWalker(root,5,null),list=[],x;
+    while((x=tw.nextNode()))list.push(x);
+    for(var i=0;i<list.length;i++){var q=list[i];try{if(q.nodeType===3){if(q.parentNode)doText(q)}else doEl(q)}catch(e){}}
+  }
+  var mo=new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var m=ms[i];try{
+    if(m.type==='characterData')doText(m.target);
+    else if(m.type==='attributes')doEl(m.target);
+    else for(var j=0;j<m.addedNodes.length;j++)walk(m.addedNodes[j])}catch(e){}}});
+  mo.observe(document.documentElement,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTR});
+  document.addEventListener('DOMContentLoaded',function(){try{walk(document.documentElement)}catch(e){}});
+  window.addEventListener('load',function(){try{walk(document.documentElement)}catch(e){}});
+  // ねんのため しばらくは ときどき みなおす
+  var sw=0,iv=setInterval(function(){try{walk(document.documentElement)}catch(e){}if(++sw>16)clearInterval(iv)},250);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)walk(document.documentElement)});
+  // 読み上げは ひらがなで
+  try{var U=window.SpeechSynthesisUtterance;if(U){var d=Object.getOwnPropertyDescriptor(U.prototype,'text');
+    if(d&&d.set)Object.defineProperty(U.prototype,'text',{get:d.get,set:function(v){d.set.call(this,reading(v))},configurable:true});
+    var W=function(t){var u=new U(reading(t));return u};W.prototype=U.prototype;window.SpeechSynthesisUtterance=W}}catch(e){}
+  // ダウンロードの なまえ
+  try{var dd=Object.getOwnPropertyDescriptor(HTMLAnchorElement.prototype,'download');
+    if(dd&&dd.set)Object.defineProperty(HTMLAnchorElement.prototype,'download',{get:dd.get,set:function(v){dd.set.call(this,plain(v))},configurable:true})}catch(e){}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>知育・学習・脳トレ総合アプリ KouSen式</title>
+<meta name="description" content="知育・学習・脳トレ総合アプリ KouSen式。ボールをころがして考える、こどもむけのゲームです。">
+<meta name="theme-color" content="#274F8E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KouSen式">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- iOS / Android など「UD デジタル 教科書体」が入っていない端末用の代替フォント（教科書体に近い Klee One） -->
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --font:"UD Digi Kyokasho NK-R","UD デジタル 教科書体 NK-R","UDDigiKyokashoNK-R","Klee One","Hiragino Maru Gothic ProN","Hiragino Sans","Meiryo",sans-serif;
+  --bg:#E6EFF6;--ink:#1F2A44;--sub:#5B6782;--panel:#FFFFFF;--line:#C9D6E4;
+  --board:#274F8E;--rim:#183766;--accent:#274F8E;
+  --red:#E23B3B;--orange:#F08A24;--green:#22A55B;--blue:#2F6FE0;--yellow:#F6C343;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141B28;--ink:#E7ECF5;--sub:#9AA7BF;--panel:#1E2738;--line:#33415A;--accent:#8FB2F0;
+}}
+:root[data-theme="dark"]{--bg:#141B28;--ink:#E7ECF5;--sub:#9AA7BF;--panel:#1E2738;--line:#33415A;--accent:#8FB2F0;}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+/* 文字はすべて NK-R。NK-R に太字は無いので擬似太字を出さない（Klee One のみ 600 をつかう） */
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-weight:400;font-synthesis:none;line-height:1.6}
+body.lock{overflow:hidden}
+button,a{font:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible{outline:3px solid #FFB020;outline-offset:3px}
+.wrap{max-width:580px;margin:0 auto;padding:18px 16px 32px;display:flex;flex-direction:column;gap:14px}
+
+/* ---- header ---- */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand img{width:54px;height:54px;border-radius:12px;flex:0 0 auto;box-shadow:0 3px 0 var(--rim)}
+h1{margin:0;font-size:clamp(1.7rem,7vw,2.2rem);font-weight:600;line-height:1.1;letter-spacing:.03em;white-space:nowrap}
+h1 .kicker{display:block;font-size:.42em;letter-spacing:.12em;color:var(--sub);margin-bottom:3px}
+.rollIn{display:inline-flex;gap:5px;margin-left:6px;vertical-align:.12em}
+.rollIn i{display:block;width:.42em;height:.42em;border-radius:50%;background-image:radial-gradient(circle at 32% 30%,rgba(255,255,255,.6) 0 20%,transparent 22%)}
+.bmBtn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;height:42px;padding:0 16px 0 12px;border-radius:999px;border:2px solid var(--accent);background:var(--panel);color:var(--accent);font-size:1rem;cursor:pointer;white-space:nowrap}
+.bmBtn svg{width:20px;height:20px;flex:0 0 auto}
+.lead{margin:-2px 0 2px;color:var(--sub);font-size:.98rem}
+
+/* ---- game buttons ---- */
+.games{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+.game{position:relative;display:flex;align-items:center;height:clamp(128px,34vw,158px);border-radius:24px;overflow:hidden;
+  text-decoration:none;color:#1F2A44;background:var(--tint);isolation:isolate;
+  border:3px solid var(--edge);box-shadow:0 6px 0 var(--edge);transition:transform .12s,box-shadow .12s;margin-bottom:6px}
+.game:active{transform:translateY(4px);box-shadow:0 2px 0 var(--edge)}
+.game.puzzle{--tint:#FBE7A1;--edge:#C9961B}
+.game.craft{--tint:#CDEFD9;--edge:#2E9A5E}
+.game.keisan{--tint:#DCD2FA;--edge:#7A5CC9}
+.game.kuku{--tint:#FFE6C4;--edge:#E08A2E}
+.game.kanji{--tint:#F9DCDF;--edge:#9A3A48}
+.game.eitango{--tint:#D6EFEC;--edge:#1F6F78}
+.game.flashk{--tint:#DDEBD8;--edge:#3E6E4E}
+.game.flashe{--tint:#DCE6F5;--edge:#2F5FA8}
+.game.color{--tint:#EFEDE4;--edge:#3B3F58}
+.game.kazutouch{--tint:#FFF3E8;--edge:#E0733A}
+.game.block{--tint:#E1F0EA;--edge:#2E7D6B}
+.game.pair{--tint:#FFF1D6;--edge:#2C7A52}
+.game.flashhira{--tint:#FFF0F6;--edge:#C2477A}
+.game.maze{--tint:#E3ECFA;--edge:#2F6FE0}
+.game.numpl{--tint:#E4EBF8;--edge:#3B5BA9}
+.game.nurie{--tint:#FCE6EB;--edge:#E0607E}
+.game.kotoba{--tint:#DDF2EB;--edge:#1F9E89}
+.game.donut{--tint:#FCEBD6;--edge:#D9822B}
+.game.quizrun{--tint:#E3E7FD;--edge:#5B6EE1}
+.game.flashkata{--tint:#F4F0FD;--edge:#7A57C9}
+.game.aiueotouch{--tint:#FFF0F6;--edge:#D94F86}
+.game.aiueokatatouch{--tint:#F4F0FD;--edge:#7A57C9}
+.game.abctouch{--tint:#EEF6FD;--edge:#2F7FC1}
+.game.yamakawa{--tint:#D9F0E0;--edge:#2E8B57}
+.game.yamakawa .plate{max-width:min(70%,330px)}
+.game.yamakawa .plate .name{font-size:clamp(1.05rem,4.7vw,1.5rem)}
+.game.chiba{--tint:#FFE3C8;--edge:#E07B39}
+.game.japan{--tint:#DCEBFA;--edge:#3D7CC9}
+.game.food{--tint:#E4F5CF;--edge:#5FA330}
+.game.food .plate{max-width:min(68%,330px)}
+.game.food .plate .name{font-size:clamp(.82rem,4.05vw,1.4rem)}
+.game.flashhira .plate,.game.flashkata .plate{max-width:min(68%,330px)}
+.game.flashhira .plate .name,.game.flashkata .plate .name{font-size:clamp(.82rem,4.05vw,1.4rem)}
+.game.keisan .plate{max-width:min(66%,310px)}
+.game.keisan .plate .name{font-size:clamp(1.05rem,4.7vw,1.5rem)}
+.game.eitango .plate{max-width:min(68%,330px)}
+.game.eitango .plate .name{font-size:clamp(1.02rem,4.6vw,1.45rem);letter-spacing:.01em}
+.game.flashkanyo{--tint:#FBEFE6;--edge:#B5542F}
+.game.kanyomaster{--tint:#F7EAE0;--edge:#9A4626}
+.game.flashkotowaza{--tint:#EEF3E2;--edge:#5E7A2E}
+.game.kotowazaou{--tint:#ECEFE0;--edge:#4E6A24}
+.game.flashkanyo .plate,.game.kanyomaster .plate,.game.flashkotowaza .plate,.game.kotowazaou .plate{max-width:min(68%,330px)}
+.game.flashkanyo .plate .name,.game.kanyomaster .plate .name,.game.flashkotowaza .plate .name,.game.kotowazaou .plate .name{font-size:clamp(.95rem,4.3vw,1.4rem)}
+.game.flashroma{--tint:#E8F0FF;--edge:#3A63C9}
+.game.romamaster{--tint:#E6ECFB;--edge:#2D4FA8}
+.game.flashchizu{--tint:#E9F5E4;--edge:#4A8A3A}
+.game.chizuou{--tint:#F3F0E2;--edge:#8A6A2A}
+.game.flashroma .plate,.game.romamaster .plate,.game.flashchizu .plate,.game.chizuou .plate{max-width:min(68%,330px)}
+.game.flashroma .plate .name,.game.romamaster .plate .name,.game.flashchizu .plate .name,.game.chizuou .plate .name{font-size:clamp(.95rem,4.3vw,1.4rem)}
+.game.rtkotoba{--tint:#E3F4E8;--edge:#2E9A5E}
+.game.rtbunsho{--tint:#FFEBDC;--edge:#E0733A}
+.game.rtadd{--tint:#ECE6FB;--edge:#7A5CC9}
+.game.rtclock{--tint:#E2EEF9;--edge:#2F7FC1}
+.game.rtmoney{--tint:#FBF1D6;--edge:#C9961B}
+.game.rtsub{--tint:#FCE8EF;--edge:#D9467A}
+.game.rtnum{--tint:#E3F4F7;--edge:#1F8FA8}
+.game.rtlen{--tint:#E2F4F1;--edge:#2A9D8F}
+.game.rtvol{--tint:#E5EEFB;--edge:#3B7DDD}
+.game.rtkotoba .plate,.game.rtbunsho .plate,.game.rtadd .plate,.game.rtclock .plate,.game.rtsub .plate,.game.rtnum .plate,.game.rtlen .plate,.game.rtvol .plate,.game.rtmoney .plate{max-width:min(63%,320px);padding:7px 12px 9px}
+.game.rtkotoba .plate .name,.game.rtbunsho .plate .name,.game.rtadd .plate .name,.game.rtclock .plate .name,.game.rtsub .plate .name,.game.rtnum .plate .name,.game.rtlen .plate .name,.game.rtvol .plate .name,.game.rtmoney .plate .name{font-size:clamp(1rem,4.5vw,1.32rem);letter-spacing:.01em;white-space:normal;line-height:1.22;word-break:keep-all;overflow-wrap:anywhere}
+.game.rtkotoba .plate .desc,.game.rtbunsho .plate .desc,.game.rtadd .plate .desc,.game.rtclock .plate .desc,.game.rtsub .plate .desc,.game.rtnum .plate .desc,.game.rtlen .plate .desc,.game.rtvol .plate .desc,.game.rtmoney .plate .desc{margin-top:2px;line-height:1.35}
+.plate .badge{display:inline-block;margin-bottom:3px;padding:0 9px;border-radius:999px;background:var(--edge);color:#fff;font-size:clamp(.66rem,2.9vw,.78rem);line-height:1.65;letter-spacing:.06em}
+.plate .badge rt{font-size:.55em}
+.game .art{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none}
+.game .art img{display:block;width:100%;height:100%;object-fit:cover;object-position:right center}
+.plate{position:relative;z-index:1;margin-left:12px;max-width:min(58%,272px);padding:10px 14px 11px;border-radius:16px;
+  background:#fff;border:2px solid var(--edge);box-shadow:0 3px 0 var(--edge)}
+.plate .name{display:block;font-size:clamp(1.25rem,5.4vw,1.6rem);font-weight:600;line-height:1.2;letter-spacing:.03em;white-space:nowrap}
+.plate .desc{display:block;margin-top:4px;font-size:clamp(.78rem,3.3vw,.9rem);line-height:1.45;color:#46516B}
+.go{position:absolute;z-index:1;right:12px;bottom:12px;width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid var(--edge);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 var(--edge)}
+.go svg{width:20px;height:20px;margin-left:3px}
+
+.foot{margin-top:6px;text-align:center;color:var(--sub);font-size:.82rem}
+
+/* ---- bookmark dialog ---- */
+dialog.bm{border:0;padding:0;border-radius:20px;width:min(560px,94vw);max-height:90vh;max-height:90dvh;background:var(--panel);color:var(--ink);box-shadow:0 20px 50px rgba(0,0,0,.35);overflow:hidden}
+dialog.bm[open]{display:flex;flex-direction:column}
+dialog.bm::backdrop{background:rgba(15,25,45,.55)}
+.bm .head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px 10px 20px;border-bottom:1px solid var(--line);flex:0 0 auto}
+.bm .head h2{margin:0;font-size:1.2rem;font-weight:600;outline:none}
+.close{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:0;background:var(--bg);color:var(--ink);font-size:1.35rem;line-height:1;cursor:pointer;padding:0}
+.bm .body{overflow-y:auto;padding:12px 20px 20px;-webkit-overflow-scrolling:touch}
+.why{margin:0 0 12px;font-size:.95rem}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:440px){.pills{gap:6px}.pills .bmBtn{height:40px;padding:0 10px 0 8px;gap:5px;font-size:clamp(.78rem,3.75vw,.95rem)}.pills .bmBtn svg{width:17px;height:17px}}
+.pgBtn{--accent:#1F8A4C;border-color:var(--accent);color:var(--accent)}
+.pgText p{margin:0 0 12px;font-size:.95rem;line-height:1.75}
+.pgText .ask{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+.qrBox{margin:16px auto 6px;width:min(240px,70vw);padding:12px;border-radius:16px;background:#fff;border:2px solid var(--line)}
+.qrBox img{display:block;width:100%;height:auto}
+.qrCap{margin:12px 0 0;text-align:center;font-size:.82rem;color:var(--sub)}
+.lineBtn{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;margin:4px 0 6px;border-radius:14px;background:#06C755;color:#fff;text-decoration:none;font-size:1rem;box-shadow:0 3px 0 #04913E}
+.lineBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #04913E}
+
+.os{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:999px;margin-bottom:6px}
+.os button{flex:1;height:38px;border:0;border-radius:999px;background:transparent;color:var(--ink);font-size:1rem;cursor:pointer}
+.os button[aria-selected="true"]{background:var(--board);color:#fff}
+.panel[hidden]{display:none}
+.note{margin:10px 0 0;padding:8px 12px;border-radius:12px;background:var(--bg);font-size:.86rem;color:var(--sub)}
+.step{padding:14px 0;border-bottom:1px dashed var(--line)}
+.step:last-child{border-bottom:0;padding-bottom:4px}
+.step h3{margin:0 0 8px;font-size:1.02rem;font-weight:600;display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.step h3 .n{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--board);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.88rem;margin-top:-1px}
+.step p{margin:6px 0 0;font-size:.88rem;color:var(--sub)}
+.fig{display:flex;justify-content:center}
+.fig svg{width:100%;max-width:300px;height:auto;display:block}
+.fig svg text{font-family:var(--font)}
+.installNow{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;margin:12px 0 2px;border:0;border-radius:14px;background:var(--green);color:#fff;font-size:1.05rem;cursor:pointer;box-shadow:0 3px 0 #17773F}
+.installNow[hidden]{display:none}
+.installNow svg{width:22px;height:22px}
+.done{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:#DFF5E7;color:#135C33;font-size:.92rem}
+.done[hidden]{display:none}
+
+/* 読み込み時にいちどだけ、ボールがころがってくる */
+@media (prefers-reduced-motion:no-preference){
+  .rollIn i{animation:roll .9s cubic-bezier(.2,.8,.3,1.1) both}
+  .rollIn i:nth-child(2){animation-delay:.12s}
+  .rollIn i:nth-child(3){animation-delay:.24s}
+  @keyframes roll{from{transform:translateX(-160%) rotate(-360deg);opacity:0}to{transform:none;opacity:1}}
+}
+@media (max-width:400px){.wrap{padding-left:12px;padding-right:12px}.plate{margin-left:10px;padding:8px 11px 9px}.go{width:38px;height:38px;right:10px;bottom:10px}}
+.game.flashyoji{--tint:#FBEFE6;--edge:#B5542F}
+.game.yojiou{--tint:#F6E6DA;--edge:#9A4524}
+.game.flashyoji .plate,.game.yojiou .plate{max-width:min(68%,330px)}
+.game.flashyoji .plate .name,.game.yojiou .plate .name{font-size:clamp(.95rem,4.3vw,1.4rem)}
+.subj{display:inline-block;margin:0 4px 3px 0;padding:0 8px;border-radius:6px;border:1.5px solid currentColor;background:#fff;font-size:clamp(.64rem,2.8vw,.76rem);line-height:1.5;font-weight:700;vertical-align:top}
+.subj.s-koku{color:#C2410C}.subj.s-san{color:#1D4ED8}.subj.s-ri{color:#15803D}.subj.s-sha{color:#9D4EDD}
+.subjtabs{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 12px}
+.subjtabs button{font:inherit;font-size:.92rem;padding:6px 14px;border-radius:999px;border:2px solid var(--edge,#1F2A44);background:#fff;color:#1F2A44;cursor:pointer}
+.subjtabs button[aria-pressed="true"]{background:var(--edge,#1F2A44);color:#fff}
+.games li[hidden]{display:none}
+
+/* ---- カテゴリ ---- */
+.cats{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cat{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:118px;padding:10px 8px 12px;border-radius:22px;text-decoration:none;color:#1F2A44;background:var(--tint);border:3px solid var(--edge);box-shadow:0 5px 0 var(--edge);transition:transform .12s,box-shadow .12s;text-align:center}
+.cat{overflow:hidden;background:var(--hill) no-repeat left bottom/100% 46%,radial-gradient(circle at 18% 30%,#fff8 0 10px,transparent 11px),radial-gradient(circle at 82% 22%,#fff8 0 7px,transparent 8px),var(--tint)}
+.cat>.ic,.cat>.big,.cat>.cnt{position:relative;z-index:1}
+.cat .ic{font-size:2.1rem;filter:drop-shadow(0 2px 0 #0001)}
+.cat.wide .ic{font-size:2.4rem}
+.deco{position:absolute;inset:0;pointer-events:none;z-index:0}
+.deco i{position:absolute;font-style:normal;font-size:24px;line-height:1;transform:rotate(var(--r));filter:drop-shadow(0 1px 0 #0001)}
+.deco i.chip{font-size:14px;font-weight:700;color:#fff;background:var(--edge);border-radius:10px;padding:4px 7px;min-width:28px;text-align:center;box-shadow:0 2px 0 #0002;font-family:inherit}
+.cat.wide .deco i{font-size:24px}.cat.wide{padding-left:34px;padding-right:34px}.cat .cnt{white-space:nowrap}.cat.g{min-height:138px;padding-bottom:30px}
+@media (max-width:380px){.cat.wide{padding:8px 12px 10px;gap:2px;flex-direction:column}.cat.wide .deco i:nth-child(-n+3),.cat.wide .deco i:nth-child(5){display:none}.cat.wide .ic{font-size:2rem}}
+@media (max-width:350px){.deco i{font-size:19px}.deco i.chip{font-size:12px;padding:3px 5px}}
+.cat:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+.cats li.wide{grid-column:1/-1}
+.cat.wide{min-height:92px;flex-direction:row;gap:14px}
+.cat.wide .big{white-space:nowrap}
+.cat.wide .cnt{align-self:center}
+.cat .ic{font-size:1.7rem;line-height:1}
+.cat .big{font-size:clamp(1.25rem,5.6vw,1.6rem);font-weight:600;line-height:1.15;color:var(--edge)}
+.cat .big b{font-size:1.5em;font-weight:600}
+.cat .big rt{font-size:.42em}
+.cat .cnt{font-size:.8rem;color:#46516B}
+.cat.g .big{display:flex;align-items:baseline;gap:2px}
+.cat.g .big small{font-size:.62em}
+.crumb{display:flex;align-items:center;gap:10px}
+.backBtn{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px 0 10px;border-radius:999px;border:2px solid var(--accent);background:var(--panel);color:var(--accent);text-decoration:none;font-size:.98rem;white-space:nowrap}
+.backBtn svg{width:18px;height:18px}
+.ctitle{margin:0;display:flex;align-items:center;gap:8px;white-space:nowrap;min-width:0;font-size:clamp(1.05rem,5.4vw,1.7rem);font-weight:600;color:var(--edge)}
+.ctitle rt{font-size:.42em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="" width="54" height="54">
+      <h1><span class="kicker">k知ちk育いく・k学がくk習しゅう・k脳のうトレk総そうk合ごうアプリ</span>KouSen式<span class="rollIn" aria-hidden="true"><i style="background-color:var(--red)"></i><i style="background-color:var(--blue)"></i><i style="background-color:var(--green)"></i></span></h1>
+    </div>
+    <div class="pills">
+    <button class="bmBtn" id="openBm" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4.5L6 21z"/><path d="M12 7.5v6M9 10.5h6" stroke-linecap="round"/></svg>ブックマークのススメ
+    </button>
+    <button class="bmBtn pgBtn" id="openPg" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7.5" r="3.2"/><path d="M3.5 20v-1.5A5.5 5.5 0 0 1 9 13a5.5 5.5 0 0 1 5.5 5.5V20"/><circle cx="17" cy="10" r="2.4"/><path d="M15.8 14.3A4.3 4.3 0 0 1 21 18.5V20"/></svg>保護者の方へ
+    </button>
+    </div>
+  </header>
+  <p class="lead">k学がくk年ねんや カテゴリを h選えらんでね。</p>
+
+    <ul class="cats">
+    <li class="wide"><a class="cat wide" href="cat_pre.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%23F2A33A%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%23F2A33A%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#FFF1DC;--edge:#F2A33A"><span class="deco" aria-hidden="true"><i style="left:12px;top:8px;--r:-10deg">🎈</i><i style="left:12px;bottom:8px;--r:8deg">🧩</i><i style="right:96px;top:8px;--r:-6deg">🖍️</i><i style="right:16px;top:10px;--r:12deg">⭐</i><i style="right:58px;bottom:8px;--r:-8deg">🍎</i><i style="right:14px;bottom:8px;--r:6deg">🚂</i></span><span class="ic" aria-hidden="true">🧸</span><span class="big">h就しゅうh学がくh前まえ</span><span class="cnt">20この ゲーム</span></a></li>
+    <li><a class="cat g" href="cat_1.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%23E0607E%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%23E0607E%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#FDE7EC;--edge:#E0607E"><span class="deco" aria-hidden="true"><i class="chip" style="left:8px;top:8px;--r:-12deg">あ</i><i class="chip" style="right:8px;top:8px;--r:10deg">1+2</i><i style="left:8px;bottom:7px;--r:8deg">🕐</i><i style="right:8px;bottom:7px;--r:-10deg">🍎</i></span><span class="ic" aria-hidden="true">🌱</span><span class="big">k小しょうk学がく<b>1</b><small>k年ねんk生せい</small></span><span class="cnt">36この ゲーム</span></a></li>
+    <li><a class="cat g" href="cat_2.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%23E8853A%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%23E8853A%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#FFEBDD;--edge:#E8853A"><span class="deco" aria-hidden="true"><i class="chip" style="left:8px;top:8px;--r:-12deg">カ</i><i class="chip" style="right:8px;top:8px;--r:10deg">2×3</i><i style="left:8px;bottom:7px;--r:8deg">📏</i><i style="right:8px;bottom:7px;--r:-10deg">🥛</i></span><span class="ic" aria-hidden="true">🌷</span><span class="big">k小しょうk学がく<b>2</b><small>k年ねんk生せい</small></span><span class="cnt">39この ゲーム</span></a></li>
+    <li><a class="cat g" href="cat_3.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%23C9A21B%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%23C9A21B%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#FFF6D2;--edge:#C9A21B"><span class="deco" aria-hidden="true"><i class="chip" style="left:8px;top:8px;--r:-12deg">漢</i><i class="chip" style="right:8px;top:8px;--r:10deg">÷</i><i style="left:8px;bottom:7px;--r:8deg">🧲</i><i style="right:8px;bottom:7px;--r:-10deg">🦋</i></span><span class="ic" aria-hidden="true">🌻</span><span class="big">k小しょうk学がく<b>3</b><small>k年ねんk生せい</small></span><span class="cnt">55この ゲーム</span></a></li>
+    <li><a class="cat g" href="cat_4.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%232E9A5E%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%232E9A5E%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#DDF3E6;--edge:#2E9A5E"><span class="deco" aria-hidden="true"><i class="chip" style="left:8px;top:8px;--r:-12deg">万</i><i class="chip" style="right:8px;top:8px;--r:10deg">≒</i><i style="left:8px;bottom:7px;--r:8deg">🔋</i><i style="right:8px;bottom:7px;--r:-10deg">🗾</i></span><span class="ic" aria-hidden="true">🍀</span><span class="big">k小しょうk学がく<b>4</b><small>k年ねんk生せい</small></span><span class="cnt">67この ゲーム</span></a></li>
+    <li><a class="cat g" href="cat_5.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%232F7FC1%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%232F7FC1%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#E0EEFB;--edge:#2F7FC1"><span class="deco" aria-hidden="true"><i class="chip" style="left:8px;top:8px;--r:-12deg">0.5</i><i class="chip" style="right:8px;top:8px;--r:10deg">%</i><i style="left:8px;bottom:7px;--r:8deg">🌾</i><i style="right:8px;bottom:7px;--r:-10deg">🧪</i></span><span class="ic" aria-hidden="true">🚀</span><span class="big">k小しょうk学がく<b>5</b><small>k年ねんk生せい</small></span><span class="cnt">59この ゲーム</span></a></li>
+    <li><a class="cat g" href="cat_6.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%235B6EE1%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%235B6EE1%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#E5E8FD;--edge:#5B6EE1"><span class="deco" aria-hidden="true"><i class="chip" style="left:8px;top:8px;--r:-12deg">3:2</i><i class="chip" style="right:8px;top:8px;--r:10deg">x</i><i style="left:8px;bottom:7px;--r:8deg">🏯</i><i style="right:8px;bottom:7px;--r:-10deg">🌏</i></span><span class="ic" aria-hidden="true">🎓</span><span class="big">k小しょうk学がく<b>6</b><small>k年ねんk生せい</small></span><span class="cnt">56この ゲーム</span></a></li>
+    <li class="wide"><a class="cat wide" href="cat_brain.html" style="--hill:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 40%27 preserveAspectRatio=%27none%27%3E%3Cpath d=%27M0 26 Q30 8 60 20 T120 18 T200 14 V40 H0Z%27 fill=%27%237A57C9%27 fill-opacity=%27.16%27/%3E%3Cpath d=%27M0 32 Q40 20 90 30 T200 26 V40 H0Z%27 fill=%27%237A57C9%27 fill-opacity=%27.2%27/%3E%3C/svg%3E');--tint:#EFE8FB;--edge:#7A57C9"><span class="deco" aria-hidden="true"><i style="left:12px;top:8px;--r:-10deg">🏆</i><i style="left:12px;bottom:8px;--r:8deg">🎯</i><i style="right:96px;top:8px;--r:-6deg">⚡</i><i style="right:16px;top:10px;--r:12deg">🔷</i><i style="right:58px;bottom:8px;--r:-8deg">🎲</i><i style="right:14px;bottom:8px;--r:6deg">💡</i></span><span class="ic" aria-hidden="true">🧩</span><span class="big">r脳のうトレゲーム</span><span class="cnt">22この ゲーム</span></a></li>
+  </ul>
+
+
+  <p class="foot">ホームがめんについかすると、インターネットがつながらないところでもあそべます。</p>
+</div>
+
+<dialog class="bm" id="pg" aria-labelledby="pgTitle">
+  <div class="head">
+    <h2 id="pgTitle" tabindex="-1">保護者の方へ</h2>
+    <button class="close" id="closePg" aria-label="k閉とじる">✕</button>
+  </div>
+  <div class="body pgText">
+    <p>k本ほんWebアプリは、地域の子供に遊んでもらうために、作者の趣味で開発しております。<br>無用な広告表示等はせず、ウイルス対策等も実施しておりますので、安心して遊んで頂ければ幸いです。<br>もしよろしければ、お知り合いの方にも広めて頂ければ幸いです。</p>
+    <p>k本ほんWebアプリは復習のために、使用して頂くのが、一番適しております。<br>単元によっては、筆算をするなど、ノート等も使用し、学習にお役立てください。</p>
+  </div>
+</dialog>
+
+<dialog class="bm" id="bm" aria-labelledby="bmTitle">
+  <div class="head">
+    <h2 id="bmTitle" tabindex="-1">ブックマークのススメ</h2>
+    <button class="close" id="closeBm" aria-label="k閉とじる">✕</button>
+  </div>
+  <div class="body">
+    <p class="why">「KouSen式」をスマートフォンやタブレットのホーム画面に追加しておくと、アプリのようにワンタップで開けます。</p>
+    <p class="done" id="already" hidden>この端末では、すでにホーム画面から開いています。</p>
+
+    <div class="os" role="tablist" aria-label="端末の種類">
+      <button role="tab" id="tab-ios" aria-controls="p-ios" aria-selected="true">iPhone・iPad</button>
+      <button role="tab" id="tab-and" aria-controls="p-and" aria-selected="false" tabindex="-1">Android</button>
+    </div>
+
+    <!-- ===== iOS ===== -->
+    <section class="panel" id="p-ios" role="tabpanel" aria-labelledby="tab-ios">
+      <div class="step">
+        <h3><span class="n">1</span>Safari でこのページを開き、画面下の「…」をタップ</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 150" role="img" aria-label="Safari の画面下にある「…」ボタンの場所">
+            <rect x="1" y="1" width="298" height="148" rx="16" fill="#fff" stroke="#C9D6E4" stroke-width="2"/>
+            <rect x="20" y="18" width="150" height="12" rx="6" fill="#DCE5EF"/><rect x="20" y="38" width="240" height="9" rx="4.5" fill="#EEF2F7"/><rect x="20" y="54" width="210" height="9" rx="4.5" fill="#EEF2F7"/>
+            <rect x="12" y="92" width="276" height="46" rx="23" fill="#EEF1F5"/>
+            <circle cx="38" cy="115" r="17" fill="#fff"/><path d="M41 107l-8 8 8 8" stroke="#1F2A44" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="62" y="98" width="174" height="34" rx="17" fill="#fff"/><text x="149" y="120" text-anchor="middle" font-size="13" fill="#1F2A44">知育・学習・脳トレ総合アプリ KouSen式</text>
+            <circle cx="262" cy="115" r="17" fill="#fff"/><circle cx="254" cy="115" r="2.6" fill="#1F2A44"/><circle cx="262" cy="115" r="2.6" fill="#1F2A44"/><circle cx="270" cy="115" r="2.6" fill="#1F2A44"/>
+            <circle cx="262" cy="115" r="24" fill="none" stroke="#F08A24" stroke-width="4"/>
+            <path d="M262 64v18M254 75l8 8 8-8" stroke="#F08A24" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p>画面の下にボタンが見えないときは、ページを少し上にスクロールすると出てきます。</p>
+      </div>
+      <div class="step">
+        <h3><span class="n">2</span>メニューの「共有」をタップ</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 150" role="img" aria-label="メニューの中の「共有」">
+            <rect x="1" y="1" width="298" height="148" rx="16" fill="#F2F4F7" stroke="#C9D6E4" stroke-width="2"/>
+            <rect x="60" y="14" width="226" height="122" rx="16" fill="#fff"/>
+            <rect x="66" y="20" width="214" height="34" rx="10" fill="#FFF1E2"/>
+            <path d="M84 33v-8M80 29l4-4 4 4" stroke="#2F6FE0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M79 31h-1.5v14h13v-14H89" stroke="#2F6FE0" stroke-width="2.4" fill="none" stroke-linejoin="round"/>
+            <text x="102" y="42" font-size="14" fill="#1F2A44">共有</text>
+            <rect x="66" y="20" width="214" height="34" rx="10" fill="none" stroke="#F08A24" stroke-width="3.5"/>
+            <line x1="76" y1="62" x2="276" y2="62" stroke="#EEF1F5" stroke-width="1.5"/>
+            <rect x="78" y="74" width="14" height="14" rx="3" fill="none" stroke="#9AA7BF" stroke-width="2"/><text x="102" y="86" font-size="13" fill="#5B6782">ブックマークを追加</text>
+            <line x1="76" y1="98" x2="276" y2="98" stroke="#EEF1F5" stroke-width="1.5"/>
+            <circle cx="85" cy="117" r="7" fill="none" stroke="#9AA7BF" stroke-width="2"/><text x="102" y="122" font-size="13" fill="#5B6782">ページ内を検索</text>
+          </svg>
+        </div>
+      </div>
+      <div class="step">
+        <h3><span class="n">3</span>「ホーム画面に追加」をタップ</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 150" role="img" aria-label="共有メニューの中の「ホーム画面に追加」">
+            <rect x="1" y="1" width="298" height="148" rx="16" fill="#F2F4F7" stroke="#C9D6E4" stroke-width="2"/>
+            <rect x="14" y="14" width="272" height="122" rx="14" fill="#fff"/>
+            <text x="30" y="40" font-size="13" fill="#5B6782">コピー</text><line x1="26" y1="52" x2="274" y2="52" stroke="#EEF1F5" stroke-width="1.5"/>
+            <text x="30" y="74" font-size="13" fill="#5B6782">リーディングリストに追加</text><line x1="26" y1="86" x2="274" y2="86" stroke="#EEF1F5" stroke-width="1.5"/>
+            <rect x="20" y="92" width="260" height="38" rx="10" fill="#FFF1E2"/>
+            <text x="30" y="116" font-size="14" fill="#1F2A44">ホーム画面に追加</text>
+            <rect x="248" y="101" width="20" height="20" rx="5" fill="none" stroke="#1F2A44" stroke-width="2.2"/><path d="M258 105.5v11M252.5 111h11" stroke="#1F2A44" stroke-width="2.2" stroke-linecap="round"/>
+            <rect x="20" y="92" width="260" height="38" rx="10" fill="none" stroke="#F08A24" stroke-width="3.5"/>
+          </svg>
+        </div>
+        <p>見つからないときは、下にスクロールするか「さらに表示」をタップすると出てきます。</p>
+      </div>
+      <div class="step">
+        <h3><span class="n">4</span>右上の「追加」をタップ</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 150" role="img" aria-label="ホーム画面に追加の画面で、右上の「追加」の場所">
+            <rect x="1" y="1" width="298" height="148" rx="16" fill="#F2F4F7" stroke="#C9D6E4" stroke-width="2"/>
+            <text x="18" y="32" font-size="13" fill="#2F6FE0">キャンセル</text>
+            <text x="150" y="32" text-anchor="middle" font-size="13" fill="#1F2A44">ホーム画面に追加</text>
+            <text x="270" y="32" text-anchor="middle" font-size="14" fill="#2F6FE0">追加</text>
+            <rect x="248" y="13" width="44" height="28" rx="14" fill="none" stroke="#F08A24" stroke-width="3.5"/>
+            <rect x="14" y="52" width="272" height="50" rx="12" fill="#fff"/>
+            <image href="icons/icon-192.png" x="24" y="59" width="36" height="36"/>
+            <text x="74" y="82" font-size="14" fill="#1F2A44">KouSen式</text>
+            <rect x="14" y="108" width="272" height="32" rx="12" fill="#fff"/>
+            <text x="26" y="129" font-size="12" fill="#1F2A44">Webアプリとして開く</text>
+            <rect x="240" y="114" width="36" height="20" rx="10" fill="#34C759"/><circle cx="266" cy="124" r="8" fill="#fff"/>
+          </svg>
+        </div>
+        <p>「Webアプリとして開く」が出ているときは、オンのままにしてください。</p>
+      </div>
+      <div class="step">
+        <h3><span class="n">5</span>ホーム画面のアイコンから開けば完成</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 130" role="img" aria-label="ホーム画面にKouSen式のアイコンが並んだ様子">
+            <rect x="1" y="1" width="298" height="128" rx="16" fill="#9DB7D8" stroke="#C9D6E4" stroke-width="2"/>
+            <g fill="#fff" opacity=".55"><rect x="28" y="18" width="46" height="46" rx="12"/><rect x="94" y="18" width="46" height="46" rx="12"/><rect x="160" y="18" width="46" height="46" rx="12"/><rect x="28" y="80" width="46" height="46" rx="12" opacity=".0"/></g>
+            <image href="icons/icon-192.png" x="226" y="18" width="46" height="46"/>
+            <rect x="221" y="13" width="56" height="56" rx="16" fill="none" stroke="#F08A24" stroke-width="3.5"/>
+            <text x="249" y="88" text-anchor="middle" font-size="12" fill="#fff">KouSen式</text>
+            <g fill="#fff" opacity=".55"><rect x="28" y="92" width="46" height="26" rx="10"/><rect x="94" y="92" width="46" height="26" rx="10"/><rect x="160" y="92" width="46" height="26" rx="10"/></g>
+          </svg>
+        </div>
+      </div>
+      <p class="note">iOS 18 以前の Safari では、画面下の共有ボタン（四角から矢印が出ているボタン）をタップすると、手順 3 の画面が出ます。</p>
+    </section>
+
+    <!-- ===== Android ===== -->
+    <section class="panel" id="p-and" role="tabpanel" aria-labelledby="tab-and" hidden>
+      <button class="installNow" id="installNow" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>このボタンでホーム画面に追加する
+      </button>
+      <div class="step">
+        <h3><span class="n">1</span>Chrome でこのページを開き、右上の「⋮」をタップ</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 150" role="img" aria-label="Chrome の右上にある「⋮」ボタンの場所">
+            <rect x="1" y="1" width="298" height="148" rx="16" fill="#fff" stroke="#C9D6E4" stroke-width="2"/>
+            <rect x="2" y="2" width="296" height="52" rx="15" fill="#EEF1F5"/><rect x="2" y="40" width="296" height="14" fill="#EEF1F5"/>
+            <rect x="14" y="12" width="190" height="30" rx="15" fill="#fff"/><text x="30" y="32" font-size="12" fill="#1F2A44">知育・学習・脳トレ総合アプリ KouSen式</text>
+            <rect x="216" y="15" width="22" height="22" rx="5" fill="none" stroke="#1F2A44" stroke-width="2.2"/><text x="227" y="31" text-anchor="middle" font-size="11" fill="#1F2A44">1</text>
+            <circle cx="268" cy="19" r="2.6" fill="#1F2A44"/><circle cx="268" cy="27" r="2.6" fill="#1F2A44"/><circle cx="268" cy="35" r="2.6" fill="#1F2A44"/>
+            <circle cx="268" cy="27" r="19" fill="none" stroke="#F08A24" stroke-width="4"/>
+            <path d="M268 104V68M260 76l8-8 8 8" stroke="#F08A24" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="20" y="72" width="150" height="12" rx="6" fill="#DCE5EF"/><rect x="20" y="92" width="200" height="9" rx="4.5" fill="#EEF2F7"/><rect x="20" y="108" width="180" height="9" rx="4.5" fill="#EEF2F7"/>
+          </svg>
+        </div>
+      </div>
+      <div class="step">
+        <h3><span class="n">2</span>「ホーム画面に追加」または「アプリをインストール」をタップ</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 150" role="img" aria-label="Chrome のメニューの中の「ホーム画面に追加」">
+            <rect x="1" y="1" width="298" height="148" rx="16" fill="#F2F4F7" stroke="#C9D6E4" stroke-width="2"/>
+            <rect x="96" y="10" width="194" height="130" rx="12" fill="#fff"/>
+            <text x="114" y="36" font-size="13" fill="#5B6782">新しいタブ</text>
+            <text x="114" y="64" font-size="13" fill="#5B6782">履歴</text>
+            <text x="114" y="92" font-size="13" fill="#5B6782">ブックマーク</text>
+            <rect x="102" y="102" width="182" height="32" rx="8" fill="#FFF1E2"/>
+            <text x="114" y="123" font-size="14" fill="#1F2A44">ホーム画面に追加</text>
+            <rect x="102" y="102" width="182" height="32" rx="8" fill="none" stroke="#F08A24" stroke-width="3.5"/>
+          </svg>
+        </div>
+        <p>メニューの下のほうにあります。見つからないときは、メニューを上にスクロールしてください。</p>
+      </div>
+      <div class="step">
+        <h3><span class="n">3</span>「インストール」をタップ</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 150" role="img" aria-label="確認画面の「インストール」ボタン">
+            <rect x="1" y="1" width="298" height="148" rx="16" fill="#7D8597" stroke="#C9D6E4" stroke-width="2"/>
+            <rect x="26" y="14" width="248" height="122" rx="20" fill="#fff"/>
+            <text x="46" y="44" font-size="14" fill="#1F2A44">アプリをインストール</text>
+            <image href="icons/icon-192.png" x="46" y="58" width="32" height="32"/>
+            <text x="90" y="80" font-size="13" fill="#1F2A44">KouSen式</text>
+            <text x="134" y="122" text-anchor="middle" font-size="13" fill="#2F6FE0">キャンセル</text>
+            <rect x="182" y="104" width="80" height="26" rx="13" fill="#2F6FE0"/>
+            <text x="222" y="122" text-anchor="middle" font-size="12" fill="#fff">インストール</text>
+            <rect x="177" y="99" width="90" height="36" rx="18" fill="none" stroke="#F08A24" stroke-width="3.5"/>
+          </svg>
+        </div>
+        <p>ボタンの名前が「追加」になっている機種もあります。</p>
+      </div>
+      <div class="step">
+        <h3><span class="n">4</span>ホーム画面のアイコンから開けば完成</h3>
+        <div class="fig">
+          <svg viewBox="0 0 300 130" role="img" aria-label="ホーム画面にKouSen式のアイコンが並んだ様子">
+            <rect x="1" y="1" width="298" height="128" rx="16" fill="#A8C6B5" stroke="#C9D6E4" stroke-width="2"/>
+            <g fill="#fff" opacity=".55"><circle cx="51" cy="41" r="23"/><circle cx="117" cy="41" r="23"/><circle cx="183" cy="41" r="23"/></g>
+            <clipPath id="andIcon"><circle cx="249" cy="41" r="23"/></clipPath>
+            <image href="icons/icon-maskable-512.png" x="226" y="18" width="46" height="46" clip-path="url(#andIcon)"/>
+            <circle cx="249" cy="41" r="29" fill="none" stroke="#F08A24" stroke-width="3.5"/>
+            <text x="249" y="88" text-anchor="middle" font-size="12" fill="#fff">KouSen式</text>
+            <g fill="#fff" opacity=".55"><rect x="28" y="96" width="46" height="22" rx="10"/><rect x="94" y="96" width="46" height="22" rx="10"/><rect x="160" y="96" width="46" height="22" rx="10"/></g>
+          </svg>
+        </div>
+      </div>
+      <p class="note">Chrome 以外のブラウザでも、メニューの中の「ホーム画面に追加」から同じように追加できます。</p>
+    </section>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const KEY='korokoro-bookmark-seen';
+  const dlg=$('bm');
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+
+  // ---- 端末の判定でタブを切り替える ----
+  const ua=navigator.userAgent;
+  const isAndroid=/Android/i.test(ua);
+  const tabs=[$('tab-ios'),$('tab-and')];
+  function selectTab(t){
+    tabs.forEach(b=>{const on=b===t;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$(b.getAttribute('aria-controls')).hidden=!on});
+  }
+  tabs.forEach((b,i)=>{
+    b.addEventListener('click',()=>selectTab(b));
+    b.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=tabs[(i+1)%2];selectTab(n);n.focus()}});
+  });
+  selectTab(isAndroid?tabs[1]:tabs[0]);
+  if(standalone)$('already').hidden=false;
+
+  // ---- ポップアップのひら閉 ----
+  function openBm(){
+    if(typeof dlg.showModal==='function'){if(!dlg.open)dlg.showModal()}else dlg.setAttribute('open','');
+    document.body.classList.add('lock');
+    dlg.querySelector('.body').scrollTop=0;
+    $('bmTitle').focus();
+  }
+  function closeBm(){
+    if(typeof dlg.close==='function'&&dlg.open)dlg.close();else dlg.removeAttribute('open');
+    document.body.classList.remove('lock');
+    try{localStorage.setItem(KEY,'1')}catch(e){}
+    $('openBm').focus({preventScroll:true});
+  }
+  $('openBm').addEventListener('click',openBm);
+  $('closeBm').addEventListener('click',closeBm);
+  dlg.addEventListener('cancel',e=>{e.preventDefault();closeBm()});
+  dlg.addEventListener('click',e=>{if(e.target===dlg)closeBm()});
+
+  // ---- 保護者の方へ ----
+  const pg=$('pg');
+  function openPg(){if(typeof pg.showModal==='function'){if(!pg.open)pg.showModal()}else pg.setAttribute('open','');document.body.classList.add('lock');pg.querySelector('.body').scrollTop=0;$('pgTitle').focus()}
+  function closePg(){if(typeof pg.close==='function'&&pg.open)pg.close();else pg.removeAttribute('open');document.body.classList.remove('lock');$('openPg').focus({preventScroll:true})}
+  $('openPg').addEventListener('click',openPg);
+  $('closePg').addEventListener('click',closePg);
+  pg.addEventListener('cancel',e=>{e.preventDefault();closePg()});
+  pg.addEventListener('click',e=>{if(e.target===pg)closePg()});
+
+  // 初めてのアクセスではさいしょからひょうじ（ホームがめんからひらいたときは除く）
+  let seen=false;try{seen=localStorage.getItem(KEY)==='1'}catch(e){}
+  if(!seen&&!standalone)openBm();
+
+  // ---- Android: その場でインストールできるときはボタンを出す ----
+  let deferred=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('installNow').hidden=false});
+  $('installNow').addEventListener('click',async()=>{
+    if(!deferred)return;
+    deferred.prompt();
+    try{await deferred.userChoice}catch(e){}
+    deferred=null;$('installNow').hidden=true;
+  });
+  window.addEventListener('appinstalled',()=>{$('installNow').hidden=true});
+
+  // ---- ボタン画像：もどったときに消えていたら読み込み直す ----
+  function fixArt(force){
+    document.querySelectorAll('.game .art img').forEach(img=>{
+      if(force||!img.complete||img.naturalWidth===0){
+        const pic=img.parentNode;pic.querySelectorAll('source').forEach(s=>{const v=s.getAttribute('srcset');s.setAttribute('srcset',v)});
+        const src=img.getAttribute('src');img.removeAttribute('src');img.setAttribute('src',src);
+      }
+    });
+  }
+  document.querySelectorAll('.game .art img').forEach(img=>{
+    img.addEventListener('error',()=>{if(!img.dataset.retry){img.dataset.retry='1';img.parentNode.querySelectorAll('source').forEach(s=>s.remove());img.src=img.getAttribute('src').split('?')[0]+'?r='+Date.now()}});
+  });
+  window.addEventListener('pageshow',e=>{fixArt(e.persisted)});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')fixArt(false)});
+
+  // ---- Service Worker（オフライン対応） ----
+  if('serviceWorker' in navigator&&location.protocol!=='file:'){
+    window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+  }
+})();
+</script>
+</body>
+</html>

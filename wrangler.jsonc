@@ -1,0 +1,31 @@
+// KouSen式 配信サーバー（Cloudflare Workers）
+// このファイルと worker/ フォルダを、education_game_kousen リポジトリの一番上（kousen_site と同じ階層）に置きます。
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "kousen",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./kousen_site",
+    "binding": "ASSETS",
+    // すべてのリクエストで先に認証チェック（Worker）を通す
+    "run_worker_first": true,
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "vars": {
+    "RC_ENTITLEMENT_ID": "acepocket_pro",
+    // Test Store / Sandbox（審査・TestFlight・開発ビルド）での購読を許可。審査に必要なので通常 "true"
+    "ALLOW_SANDBOX": "true",
+    // アプリの src/config.ts の server.appClientKey と同じ値
+    "APP_CLIENT_KEY": "kousen-app-v1",
+    "SESSION_TTL_SECONDS": "86400"
+  },
+  // workers.dev の URL で公開（独自ドメインを使う場合は routes を追加）
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true }
+  // シークレット（値はここに書かない）:
+  //   npx wrangler secret put SESSION_SECRET
+  //   npx wrangler secret put RC_SECRET_KEY
+}
