@@ -1,6 +1,6 @@
 // 知育Webアプリ KouSen式 Service Worker
 // ファイルを更新したら VERSION を上げてください（古いキャッシュが入れ替わります）
-const VERSION = 'v72';
+const VERSION = 'v73';
 const CACHE = 'kousen-' + VERSION;
 const FONT_CACHE = 'kousen-fonts';
 const ASSETS = [
@@ -811,17 +811,99 @@ const ASSETS = [
   './video/food_tutorial.jpg'
 ];
 
+// ---------------------------------------------------------------------------
+// オフライン用の保存（v73〜）
+//  - 最初は小さなトップ・カテゴリ画面だけを保存して、すぐ使えるようにする
+//  - 残り（ゲーム・画像）は裏で1つずつ保存。途中でアプリを閉じても、次に開いたとき続きから保存する
+//  - サーバーが「.html なしのURL」へ転送（リダイレクト）するため、転送後のレスポンスは
+//    そのまま使えない（画面遷移で使うとエラーになる）。保存前に作り直す
+// ---------------------------------------------------------------------------
+const CORE = ASSETS.filter(a => a === './' || a === './index.html' || /^\.\/cat_[^/]*\.html$/.test(a) || a.endsWith('.webmanifest'));
+const ORDER = { html: 0, webmanifest: 0, webp: 1, jpg: 2, png: 3 };
+const FILL_ORDER = ASSETS.slice().sort((a, b) => (ORDER[ext(a)] ?? 1) - (ORDER[ext(b)] ?? 1));
+const FILL_CONCURRENCY = 4;
+
+function ext(p) { const m = /\.([a-z0-9]+)$/i.exec(p); return m ? m[1].toLowerCase() : 'html'; }
+function abs(p) { return new URL(p, self.registration.scope).href; }
+
+// 転送後のレスポンスを、転送なしの普通のレスポンスに作り直す
+async function clean(res) {
+  if (!res.redirected) return res;
+  const body = await res.blob();
+  return new Response(body, { status: res.status, statusText: res.statusText, headers: res.headers });
+}
+
+async function fetchAndStore(cache, url) {
+  const res = await fetch(url, { credentials: 'same-origin', cache: 'no-cache' });
+  if (!res.ok) { const err = new Error('HTTP ' + res.status); err.status = res.status; throw err; }
+  await cache.put(url, await clean(res));
+}
+
+let filling = null;
+function fillCache() {
+  if (filling) return filling;
+  filling = (async () => {
+    const cache = await caches.open(CACHE);
+    const queue = [];
+    for (const a of FILL_ORDER) {
+      const url = abs(a);
+      if (!(await cache.match(url, { ignoreVary: true }))) queue.push(url);
+    }
+    let stop = false;
+    const worker = async () => {
+      while (!stop && queue.length) {
+        const url = queue.shift();
+        try { await fetchAndStore(cache, url); }
+        catch (e) {
+          // 通信できない・入場券の期限切れ（403）のときは中断して、次に開いたときに続きから
+          if (!e.status || e.status === 403) stop = true;
+        }
+      }
+    };
+    await Promise.all(Array.from({ length: FILL_CONCURRENCY }, worker));
+    if (!stop && !queue.length) {
+      // すべて保存できたら、古いバージョンの保存を消す
+      const keys = await caches.keys();
+      await Promise.all(keys.filter(k => (k.startsWith('korokoro-') || k.startsWith('kousen-')) && k !== CACHE && k !== FONT_CACHE).map(k => caches.delete(k)));
+    }
+  })().catch(() => {}).finally(() => { filling = null; });
+  return filling;
+}
+
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    // トップ・カテゴリ画面だけ先に保存（失敗しても裏の保存で再挑戦する）
+    await Promise.all(CORE.map(a => fetchAndStore(cache, abs(a)).catch(() => {})));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => (k.startsWith('korokoro-') || k.startsWith('kousen-')) && k !== CACHE && k !== FONT_CACHE).map(k => caches.delete(k))
-    )).then(() => self.clients.claim())
-  );
+  e.waitUntil(self.clients.claim().then(() => { fillCache(); }));
 });
+
+self.addEventListener('message', e => {
+  if (e.data === 'kousen-fill') e.waitUntil(fillCache());
+});
+
+// 保存から探す（.html あり・なしの両方を試す）
+async function lookup(req) {
+  const opts = { ignoreSearch: true, ignoreVary: true };
+  let hit = await caches.match(req, opts);
+  if (hit) return hit;
+  const url = new URL(req.url);
+  const alts = [];
+  if (url.pathname.endsWith('/')) alts.push(url.pathname + 'index.html');
+  else if (url.pathname.endsWith('.html')) alts.push(url.pathname.slice(0, -5));
+  else alts.push(url.pathname + '.html');
+  for (const p of alts) {
+    hit = await caches.match(url.origin + p, opts);
+    if (hit) return hit;
+  }
+  if (req.mode === 'navigate') return caches.match(abs('./index.html'), opts);
+  return undefined;
+}
 
 self.addEventListener('fetch', e => {
   const req = e.request;
@@ -841,14 +923,21 @@ self.addEventListener('fetch', e => {
   }
 
   if (url.origin !== location.origin) return;
+  if (url.pathname.startsWith('/__auth/')) return;
   // 動画は途中から読み込む（Range）ため、Service Worker を通さずそのまま配信
   if (req.headers.has('range') || url.pathname.endsWith('.mp4')) return;
 
-  // 同じサイト内: ネットにつながればネット優先、だめならキャッシュ
+  // 画面を開くたびに、まだ保存していないゲームの保存を続ける
+  if (req.mode === 'navigate') e.waitUntil(fillCache());
+
+  // 同じサイト内: ネットにつながればネット優先、だめなら保存から
   e.respondWith(
     fetch(req).then(res => {
-      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+      if (res.ok && res.type === 'basic') {
+        const copy = res.clone();
+        e.waitUntil(clean(copy).then(c => caches.open(CACHE).then(cache => cache.put(req.url, c))).catch(() => {}));
+      }
       return res;
-    }).catch(() => caches.match(req, { ignoreSearch: true }).then(r => r || (req.mode === 'navigate' ? caches.match('./index.html') : undefined)))
+    }).catch(() => lookup(req).then(r => r || Response.error()))
   );
 });
