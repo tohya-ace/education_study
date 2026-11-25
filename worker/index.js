@@ -109,6 +109,17 @@ async function handleAuth(request, env, url) {
     const appUserId = typeof body?.appUserId === 'string' ? body.appUserId : '';
     if (!appUserId || appUserId.length > 200) return json({ error: 'bad_request' }, 400);
 
+    // ストア審査用のアクセスコード（審査担当者は定期購入・無料トライアルを始められないため）
+    // コードは Cloudflare のシークレット REVIEW_CODE に設定。未設定なら使えない
+    const reviewCode = typeof body?.reviewCode === 'string' ? body.reviewCode : '';
+    if (reviewCode) {
+      if (!env.REVIEW_CODE || !safeEqual(reviewCode, String(env.REVIEW_CODE))) return json({ error: 'bad_code' }, 403);
+      const now = Math.floor(Date.now() / 1000);
+      const exp = now + (Number(env.SESSION_TTL_SECONDS) || DEFAULT_TTL);
+      const token = await signToken({ v: 1, uid: 'review:' + appUserId, iat: now, exp }, env);
+      return json({ token, expiresAt: exp, review: true }, 200);
+    }
+
     let ent;
     try {
       ent = await checkEntitlement(appUserId, env);
@@ -157,6 +168,15 @@ async function handleAuth(request, env, url) {
   }
 
   return text('Not Found', 404);
+}
+
+/** 長さに関係なく同じ時間で比べる（コードの推測を難しくする） */
+function safeEqual(a, b) {
+  const x = new TextEncoder().encode(a);
+  const y = new TextEncoder().encode(b);
+  let diff = x.length ^ y.length;
+  for (let i = 0; i < Math.max(x.length, y.length); i++) diff |= (x[i] || 0) ^ (y[i] || 0);
+  return diff === 0;
 }
 
 function checkAppKey(request, env) {
