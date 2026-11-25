@@ -9,3 +9,6 @@ html::before,html::after{content:"";position:fixed;inset:0;z-index:-1;pointer-ev
 html::before{background:url(img/kousen_bg.webp) center/cover no-repeat}
 html::after{background:#000;opacity:var(--ks-veil,.5)}
 html.ks-menu{--ks-veil:.25}
+
+/* 背景イラストの上に直接のっている文字は白にする（ks-bg.js が class="ks-onbg" を付ける） */
+.ks-onbg{color:#fff!important}

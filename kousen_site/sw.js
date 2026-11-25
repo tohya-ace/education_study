@@ -6,6 +6,7 @@ const FONT_CACHE = 'kousen-fonts';
 const ASSETS = [
   './',
   './ks-bg.css',
+  './ks-bg.js',
   './img/kousen_bg.webp',
   './index.html',
   './korokoro_puzzle.html',
