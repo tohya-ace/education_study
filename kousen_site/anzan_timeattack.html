@@ -162,7 +162,7 @@ h1{margin:0;font-size:clamp(1.15rem,5.2vw,1.7rem);font-weight:600;line-height:1.
 .pad button:active,.pad button.hit{transform:translateY(3px);box-shadow:0 1px 0 var(--keyEdge)}
 .pad .del{font-size:1.05rem;background:var(--line);box-shadow:0 4px 0 #A9B8CB}
 .pad .ent{font-size:1.05rem;background:var(--board);color:#fff;box-shadow:0 4px 0 var(--rim)}
-.pad[aria-disabled="true"] button{opacity:.55}
+.pad[aria-disabled="true"] button{filter:saturate(.35) brightness(.94);color:var(--sub)}
 .playFoot{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .quit{height:36px;padding:0 14px;border-radius:999px;border:2px solid var(--line);background:var(--panel);font-size:.95rem}
 
@@ -225,6 +225,7 @@ dialog.tuto::backdrop{background:rgba(15,25,45,.55)}
 .vbox.playing .vplay{display:none}
 .vnext{margin:12px 0 0;text-align:center;font-size:.86rem;color:var(--sub)}
 </style>
+<link rel="stylesheet" href="ks-bg.css">
 </head>
 <body>
 <div class="wrap">

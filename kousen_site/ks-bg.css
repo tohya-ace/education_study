@@ -1,0 +1,20 @@
+/* KouSen式 共通の背景イラスト
+ *  - ゲーム画面：50%
+ *  - トップ・学年（カテゴリ）画面：25%（<html class="ks-menu">）
+ * 各ページの背景色（--bg）は html に移し、body を透明にしてイラストを見せる */
+html{background:var(--bg)}
+body{background:transparent!important}
+html::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:url(img/kousen_bg.webp) center/cover no-repeat;
+  opacity:var(--ks-bg-opacity,.5)
+}
+html.ks-menu{--ks-bg-opacity:.25}
+
+/* ダークモードでは薄くする（ゲーム20%・トップと学年12%） */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--ks-bg-opacity:.2}
+  :root.ks-menu:not([data-theme="light"]){--ks-bg-opacity:.12}
+}
+:root[data-theme="dark"]{--ks-bg-opacity:.2}
+:root.ks-menu[data-theme="dark"]{--ks-bg-opacity:.12}
