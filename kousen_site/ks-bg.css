@@ -1,11 +1,11 @@
 /* KouSen式 共通の背景イラスト
- *  - イラストの上に白いベールを重ねて、文字を読みやすくする
- *    ゲーム画面：白50%／トップ・学年（カテゴリ）画面：白25%（<html class="ks-menu">）
+ *  - イラストの上に黒いベールを重ねて、ボタンや文字を目立たせる
+ *    ゲーム画面：黒50%／トップ・学年（カテゴリ）画面：黒25%（<html class="ks-menu">）
  *  - 端末のダークモードに関係なく、いつも同じ明るい見た目にする（各ページの <html data-theme="light">）
  * 各ページの背景色（--bg）は html に移し、body を透明にしてイラストを見せる */
 html{background:var(--bg)}
 body{background:transparent!important}
 html::before,html::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
 html::before{background:url(img/kousen_bg.webp) center/cover no-repeat}
-html::after{background:#fff;opacity:var(--ks-veil,.5)}
+html::after{background:#000;opacity:var(--ks-veil,.5)}
 html.ks-menu{--ks-veil:.25}
